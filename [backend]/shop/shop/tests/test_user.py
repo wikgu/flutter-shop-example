@@ -49,8 +49,23 @@ class TestUser:
     })
     assert response.json().get('message') == 'Invalid username or password.'
   
+  def test_user_details(self):
+    sess = requests.Session()
+    sess.post(user_endpoint+'login', {
+      'username': 'test',
+      'password': 'test'
+    })
+    response = sess.get(user_endpoint+'details')
+    assert response.json().get('user')["username"] is not None
+    
   def test_user_delete(self):
-    response = requests.post(user_endpoint+'delete', {
+    sess = requests.Session()
+    sess.post(user_endpoint+'login', {
+      'username': 'test',
+      'password': 'test'
+    })
+    response = sess.post(user_endpoint+'delete', {
       'password': 'test'
     })
     assert response.json().get('status') == 'success'
+  

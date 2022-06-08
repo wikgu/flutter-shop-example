@@ -13,7 +13,10 @@ def index(request):
 
 def products(request):
   return JsonResponse({"all": list(Product.objects.all().values())}, safe=False)
-
+def details(request, pk):
+  prod = Product.objects.get(pk=pk)
+  prod._state = None
+  return JsonResponse(prod.__dict__, safe=False)
 
 # USER MANAGEMENT
 class Users:
@@ -57,11 +60,11 @@ class Users:
     else:
       return JsonResponse({"status": "failure", "message": "Invalid request."}, safe=False)
   
-  def get_user(request):
+  def details(request):
     if request.method == 'GET':
       user = request.user
       if user.is_authenticated:
-        return JsonResponse({"status": "success", "user": user.username}, safe=False)
+        return JsonResponse({"status": "success", "user": {"username": user.username, "email": user.email}}, safe=False)
       else:
         return JsonResponse({"status": "failure", "message": "User is not authenticated."}, safe=False)
     else:
